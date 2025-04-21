@@ -28,11 +28,12 @@ const Game: React.FC = () => {
     // Bot's turn in single-player mode
     if (gameMode === 'single' && gameState.currentPlayer === 'O' && !gameState.gameOver) {
       console.log('Bot is thinking...'); // Debug log
+      console.log('Current move history:', gameState.moveHistory); // Debug log
       const timeoutId = setTimeout(() => {
-        const botMove = getBotMove([...gameState.board]);
+        const botMove = getBotMove([...gameState.board], gameState.moveHistory);
         console.log('Bot chose move:', botMove); // Debug log
         if (botMove !== -1) {
-          handleMove(botMove);
+          makeMove(botMove, 'O');
         }
       }, 500);
 
@@ -50,24 +51,16 @@ const Game: React.FC = () => {
     return null;
   };
 
-  const handleMove = (index: number) => {
-    // Prevent moves if game mode is not selected
-    if (!gameMode) return;
-    
-    // In single-player mode, prevent player from making moves for O
-    if (gameMode === 'single' && gameState.currentPlayer === 'O') return;
-    
-    if (gameState.board[index] || gameState.gameOver) return;
-
+  const makeMove = (index: number, player: Player) => {
     const newBoard = [...gameState.board];
-    const currentPlayerMoves = [...gameState.moveHistory[gameState.currentPlayer]];
+    const currentPlayerMoves = [...gameState.moveHistory[player]];
     
     // Add the new piece
     const newMove: PlayerMove = {
       index,
       timestamp: Date.now(),
     };
-    newBoard[index] = gameState.currentPlayer;
+    newBoard[index] = player;
     currentPlayerMoves.push(newMove);
 
     // Check for winner after placing the piece
@@ -84,14 +77,26 @@ const Game: React.FC = () => {
     setWinningCombination(winCombo);
     setGameState(prevState => ({
       board: newBoard,
-      currentPlayer: prevState.currentPlayer === 'X' ? 'O' : 'X',
+      currentPlayer: player === 'X' ? 'O' : 'X',
       winner,
       gameOver: winner !== null,
       moveHistory: {
         ...prevState.moveHistory,
-        [prevState.currentPlayer]: currentPlayerMoves,
+        [player]: currentPlayerMoves,
       },
     }));
+  };
+
+  const handleMove = (index: number) => {
+    // Prevent moves if game mode is not selected
+    if (!gameMode) return;
+    
+    // In single-player mode, prevent player from making moves for O
+    if (gameMode === 'single' && gameState.currentPlayer === 'O') return;
+    
+    if (gameState.board[index] || gameState.gameOver) return;
+
+    makeMove(index, gameState.currentPlayer);
   };
 
   const resetGame = () => {
