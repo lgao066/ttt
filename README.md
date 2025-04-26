@@ -32,7 +32,7 @@ A modern implementation of Tic Tac Toe with a unique twist - each player can hav
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/canvanauts/ttt.git
+   git clone https://github.com/lgao/ttt.git
    cd ttt
    ```
 
