@@ -82,17 +82,13 @@ const getPositionStrategicValue = (board: Board, position: number, player: Playe
 const evaluateBoard = (
   board: Board,
   depth: number,
-  history: GameHistory,
-  currentPlayer: Player
+  history: GameHistory
 ): number => {
   const winner = checkWinner(board);
   if (winner === 'O') return 1000 - depth;
   if (winner === 'X') return -1000 + depth;
 
   let score = 0;
-  const botPieces = getPlayerPieces(board, 'O');
-  const playerPieces = getPlayerPieces(board, 'X');
-
   // Evaluate immediate threats and opportunities
   const botWinOpportunities = countWinningOpportunities(board, 'O');
   const playerWinOpportunities = countWinningOpportunities(board, 'X');
@@ -162,7 +158,7 @@ export const minimax = (
 ): Move => {
   // Base cases
   if (checkWinner(board) || depth >= MAX_DEPTH) {
-    return { index: -1, score: evaluateBoard(board, depth, history, player) };
+    return { index: -1, score: evaluateBoard(board, depth, history) };
   }
 
   const currentPlayer = isMaximizing ? 'O' : 'X';
@@ -263,7 +259,6 @@ export const minimax = (
 
 export const getBotMove = (board: Board, history: GameHistory): number => {
   // First, check if we can win immediately
-  const botPieces = getPlayerPieces(board, 'O');
   const emptySquares = getEmptySquares(board);
   
   // Check for immediate win
