@@ -2,7 +2,6 @@
 
 import { Board as BoardType } from '../types/game';
 import Square from './Square';
-import { WINNING_COMBINATIONS } from '../utils/gameLogic';
 
 interface BoardProps {
   board: BoardType;
